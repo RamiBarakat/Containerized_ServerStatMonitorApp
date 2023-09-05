@@ -1,0 +1,25 @@
+version: '3'
+services:
+  pythonapp:
+    build: ./python
+    command:  /app/start.sh
+    ports:
+      - '5000:5000'
+    volumes:
+       - ./python:/app
+    depends_on:
+      - mysql
+
+  mysql:
+    build:
+      context: ./mysql/
+    restart: always
+    volumes:
+      - ./mysql:/app
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'root'
+    ports:
+      - '3333:3306'
