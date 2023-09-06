@@ -13,7 +13,7 @@
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
  - Docker & docker-compose (RHEL based systems):
-   - update yum and download the yum config manager by:
+   - update yum and download the yum package config manager by:
      
      ```shell
      yum update && yum install yum-util
