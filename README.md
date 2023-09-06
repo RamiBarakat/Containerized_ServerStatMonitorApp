@@ -14,11 +14,12 @@
  - Linux/Unix OS (RHEL was used in this particular project)
  - Docker & docker-compose (RHEL based systems):
    - update yum and download the yum config manager by:
+     
      ```shell
      yum update && yum install yum-util
       ```
    - on RHEL just do:
-   -  ```shell
+     ```shell
      sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
       ```
    
