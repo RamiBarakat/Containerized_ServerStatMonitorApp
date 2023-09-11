@@ -26,7 +26,17 @@
    ```shell
    localhost:5000/disk
     ```
-
+  - In order to view the current statistics, use the following:
+     ```shell
+     localhost:5000/cpu_now
+     ```
+     ```shell
+     localhost:5000/mem_now
+     ```
+     ```shell
+     localhost:5000/disk_now
+     ```
+  
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
  - Docker & docker-compose (RHEL based systems):
