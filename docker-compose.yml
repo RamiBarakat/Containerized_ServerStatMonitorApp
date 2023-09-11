@@ -2,20 +2,26 @@ version: '3'
 services:
   pythonapp:
     build: ./python
-    command:  /app/start.sh 
+    command:  /bin/bash -c 'chmod +x /app/start.sh; /app/start.sh'
     ports:
       - '5000:5000'
     volumes:
        - ./python:/app
+    environment:
+      USER: 'root'
+      PASSWORD: 'root'
+      HOST: 'mysqlnew'
+      PORT: '3306'
+      DATABASE: 'db'
     depends_on:
-      - mysql
+      - mysqlnew
 
-  mysql:
+  mysqlnew:
     build:
-      context: ./mysql/
+      context: ./mysqldb/
     restart: always
     volumes:
-      - ./mysql:/app
+      - ./mysqldb:/app
       - mysqldata:/var/lib/mysql
     environment:
       MYSQL_DATABASE: 'db'
@@ -24,5 +30,6 @@ services:
       MYSQL_PASSWORD: 'root'
     ports:
       - '3333:3306'
+
 volumes:
   mysqldata:
