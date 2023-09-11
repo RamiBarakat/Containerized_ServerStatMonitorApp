@@ -45,6 +45,12 @@
      ```shell
      docker compose up
      ```
+ ## Logs
+ - In order to view any error that might occur with the Flask API or the database, view the log files
+   -- for the API: flask_app.log
+   -- for the statistics collection: readstats.log
+
+
   
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
