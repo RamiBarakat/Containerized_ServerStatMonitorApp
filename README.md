@@ -41,6 +41,7 @@
      docker compose down
      ```
      then:
+  
      ```shell
      docker compose up
      ```
