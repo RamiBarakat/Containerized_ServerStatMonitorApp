@@ -3,7 +3,7 @@
 ## How to run the Application:
  - Make sure docker and docker compose are downloaded on your Linux/unix based machine.
  - Create a directory on your machine and cd into it.
- - Clone the repo into the directory
+ - Clone the repo into the directory.
  - For the first time run the command
    ```shell
     docker-compose up --build
@@ -35,6 +35,14 @@
      ```
      ```shell
      localhost:5000/disk_now
+     ```
+    - Note: if the application isn't working properly, try the remove the containers and create them again, as follows
+      ```shell
+     docker compose down
+     ```
+     then:
+     ```shell
+     docker compose up
      ```
   
  ## Tech Stack
