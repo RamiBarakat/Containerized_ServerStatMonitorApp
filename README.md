@@ -4,11 +4,18 @@
  - Make sure docker and docker compose are downloaded on your Linux/unix based machine.
  - Create a directory on your machine and cd into it.
  - Clone the repo into the directory
- - Run the command
+ - For the first time run the command
    ```shell
     docker-compose up --build
    ```
- - Open your browser on port 5000, i.e. localhost:5000/ (if running on localhost)
+ - After the first time, run the command
+    ```shell
+   docker compose up
+   ```
+ - If the application is running on localhowt, then open your browser on port 5000:
+ ```shell
+   localhost:5000/ (if running on localhost)
+```
 
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
