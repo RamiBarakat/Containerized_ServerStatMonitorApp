@@ -14,5 +14,6 @@ COPY . .
 
 RUN chmod +x /app/start.sh
 
-# Specify the entrypoint script
-ENTRYPOINT ["/app/start.sh"]
+#ENV user=root password=root host=mysql port=3306 database=db
+
+#ENTRYPOINT ["/app/start.sh"]
