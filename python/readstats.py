@@ -1,6 +1,8 @@
 import mysql.connector
 import psutil
 import logging
+import os
+import datetime
 
 logging.basicConfig(filename='readstats.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -15,7 +17,7 @@ def log_functions(func):
         except Exception as e:
             error_message = f"Function {function_name} failed with error: {str(e)}"
             logging.error(error_message, exc_info=True)
-            raise e
+            #raise e
 
     return wrapper
 
@@ -32,7 +34,8 @@ def get_system_stats():
 @log_functions
 def connect_to_database():
     try:
-        conn = mysql.connector.connect(user='root', password='root', host='mysql', port="3306", database='db')
+        user, password, host, port, database = os.getenv('USER'), os.getenv('PASSWORD'), os.getenv('HOST'), os.getenv('PORT'), os.getenv('DATABASE')
+        conn = mysql.connector.connect(user=user, password=password, host=host, port=port, database=database)
         logging.info("Connected to the database")
         return conn
     except Exception as e:
@@ -41,10 +44,25 @@ def connect_to_database():
         raise e
 
 @log_functions
-def insert_data_into_table(conn, table_name, data):
+def check_num(conn,*args):
     try:
         cursor = conn.cursor(buffered=True)
-        cursor.execute(f"INSERT INTO {table_name} (value) VALUES (%s)", (data,))
+
+        for table_name in args:
+            cursor.execute(f"SELECT COUNT(*) FROM {table_name};")
+            current_count = cursor.fetchone()[0]
+
+            if current_count >= 24:
+                cursor.execute(f"DELETE FROM {table_name} ORDER BY id LIMIT 1;")
+    except Exception as e:
+        error_message = f"Error in deleting data from {table_name}"
+        logging.error(error_message)
+
+@log_functions
+def insert_data_into_table(conn, table_name, data, time):
+    try:
+        cursor = conn.cursor(buffered=True)
+        cursor.execute(f"INSERT INTO {table_name} (time,value) VALUES (%s, %s)", (time, data))        
         logging.info(f"Inserted data into {table_name} table")
         conn.commit()
         cursor.close()
@@ -57,11 +75,13 @@ def insert_data_into_table(conn, table_name, data):
 def main():
     cpu_usage, memory_usage, disk_usage = get_system_stats()
     conn = connect_to_database()
-
-    insert_data_into_table(conn, "cpu", cpu_usage)
-    insert_data_into_table(conn, "mem", memory_usage)
-    insert_data_into_table(conn, "disk", disk_usage)
-
+    check_num(conn,'cpu','mem','disk')
+    now = datetime.datetime.now()
+    current_time = str(now.strftime("%H:%M:%S"))
+    insert_data_into_table(conn, "cpu", cpu_usage, current_time)
+    insert_data_into_table(conn, "mem", memory_usage, current_time)
+    insert_data_into_table(conn, "disk", disk_usage, current_time)
+    conn.commit()
     conn.close()
     logging.info("Closed the database connection")
 
