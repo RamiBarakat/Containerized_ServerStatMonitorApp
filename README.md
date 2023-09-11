@@ -13,9 +13,9 @@
    docker compose up
    ```
  - If the application is running on localhowt, then open your browser on port 5000:
-   ```shell
+    ```shell
    localhost:5000/ (if running on localhost)
-   ```
+    ```
 
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
