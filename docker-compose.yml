@@ -10,18 +10,18 @@ services:
     environment:
       USER: 'root'
       PASSWORD: 'root'
-      HOST: 'mysqlnew'
+      HOST: 'mysql'
       PORT: '3306'
       DATABASE: 'db'
     depends_on:
-      - mysqlnew
+      - mysql
 
-  mysqlnew:
+  mysql:
     build:
-      context: ./mysqldb/
+      context: ./mysql/
     restart: always
     volumes:
-      - ./mysqldb:/app
+      - ./mysql:/app
       - mysqldata:/var/lib/mysql
     environment:
       MYSQL_DATABASE: 'db'
