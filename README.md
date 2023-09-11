@@ -16,6 +16,16 @@
     ```shell
    localhost:5000/ (if running on localhost)
     ```
+ - In order to view the CPU, Memory, Disk statistics use the following URLs respectively
+      ```shell
+   localhost:5000/cpu
+    ```
+       ```shell
+   localhost:5000/mem
+    ```
+     ```shell
+   localhost:5000/disk
+    ```
 
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
