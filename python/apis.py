@@ -3,12 +3,12 @@ import psutil
 import mysql.connector
 import datetime
 import logging
+import os
 
 app = Flask(__name__)
 
 # Configure the logging system
 logging.basicConfig(filename='flask_app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 
 def log_functions(func):
     def wrapper(*args, **kwargs):
@@ -22,12 +22,11 @@ def log_functions(func):
             error_message = f"Function {function_name} failed with error: {str(e)}"
             logging.error(error_message, exc_info=True)
             raise e
-
     wrapper.__name__ = func.__name__
     return wrapper
 
-
 cursor = None
+
 
 '''
 @log_functions
@@ -36,41 +35,52 @@ def connectDB():
         conn = mysql.connector.connect(user='root', password='root', host='mysql', port="3306", database='db')
         g.db_cursor = conn.cursor(buffered=True)
     return g.db_cursor
-'''
+''' 
+
+@log_functions
+def getEnv():
+      return os.getenv('USER'), os.getenv('PASSWORD'), os.getenv('HOST'), os.getenv('PORT'), os.getenv('DATABASE')
 
 
 @app.route("/", methods=['GET'])
+@log_functions
 def get_home():
     return "Welcome!"
-
 
 @app.route('/cpu', methods=['GET'])
 @log_functions
 def get_cpu_stats():
-    try:
-        conn = mysql.connector.connect(user='root', password='root', host='mysql', port="3306", database='db')
-        cursor = conn.cursor(buffered=True)
-        cursor.execute("SELECT * FROM cpu;")
-        result = cursor.fetchall()
-        data = [{"column1": row[0], "column2": row[1]} for row in result]
-        return jsonify(data)
-
-    except Exception as e:
-        return jsonify({"error": str(e)})
+       try:
+           user, password, host, port, database = getEnv()
+           conn = mysql.connector.connect(user=user, password=password, host=host, port=port, database=database) 
+           cursor = conn.cursor(buffered=True)
+           cursor.execute("SELECT * FROM cpu;")
+           result = cursor.fetchall()
+           for row in result:
+               print(row)
+           data = [{"TIME": row[1], "PERCENTAGE OF USAGE%": row[2]} for row in result]
+           return jsonify(data)
+       
+       except Exception as e:
+           logging.error(str(e))
+           return jsonify({"error" : str(e)})
+        
 
 
 @app.route('/mem', methods=['GET'])
 @log_functions
 def get_mem_stats():
     try:
-        conn = mysql.connector.connect(user='root', password='root', host='mysql', port="3306", database='db')
+        user, password, host, port, database = getEnv()
+        conn = mysql.connector.connect(user=user, password=password, host=host, port=port, database=database)
         cursor = conn.cursor(buffered=True)
         cursor.execute("SELECT * FROM mem;")
         result = cursor.fetchall()
-        data = [{"column1": row[0], "column2": row[1]} for row in result]
+        data = [{"TIME": row[1], "PERCENTAGE OF USAGE%": row[2]} for row in result]
         return jsonify(data)
 
     except Exception as e:
+        logging.error(str(e))
         return jsonify({"error": str(e)})
 
 
@@ -78,19 +88,21 @@ def get_mem_stats():
 @log_functions
 def get_disk_stats():
     try:
-        conn = mysql.connector.connect(user='root', password='root', host='mysql', port="3306", database='db')
+        user, password, host, port, database = getEnv()
+        conn = mysql.connector.connect(user=user, password=password, host=host, port=port, database=database)
         cursor = conn.cursor(buffered=True)
         cursor.execute("SELECT * FROM disk;")
         result = cursor.fetchall()
-        data = [{"column1": row[0], "column2": row[1]} for row in result]
+        data = [{"TIME": row[1], "PERCENTAGE OF USAGE%": row[2]} for row in result]
         return jsonify(data)
 
     except Exception as e:
+        logging.error(str(e))
         return jsonify({"error": str(e)})
 
 
 @app.route('/cpu_now', methods=['GET'])
-# @log_functions
+#@log_functions
 def get_cpu_now():
     now = datetime.datetime.now()
     current_time = str(now.strftime("%H:%M:%S"))
@@ -114,6 +126,8 @@ def get_disk_now():
     current_time = str(now.strftime("%H:%M:%S"))
     disk_usage = float(psutil.disk_usage('/')[3])
     return jsonify({current_time: disk_usage})
+
+
 
 
 if __name__ == "__main__":
