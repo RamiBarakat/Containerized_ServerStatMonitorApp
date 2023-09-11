@@ -23,7 +23,24 @@ class TestReadStats(unittest.TestCase):
 
         self.assertGreaterEqual(disk_usage, 0.0)
         self.assertLessEqual(disk_usage, 100.0)
+    
+    @mock.patch('mysql.connector.connect')
+    def test_check_num(self, mock_connect):
+        conn = mock.MagicMock()
+        cursor = mock.MagicMock()
+        mock_connect.return_value = conn
+        conn.cursor.return_value = cursor
 
+        tables = ['cpu', 'mem', 'disk']
+        for table in tables:
+            cursor.fetchone.return_value = (25,)
+            cursor.execute.reset_mock()
+
+        readstats.check_num(conn, *tables)
+
+        expected_calls = [mock.call(f"DELETE FROM {table_name} ORDER BY id LIMIT 1;") for table_name in tables]
+        cursor.execute.assert_has_calls(expected_calls, any_order=True)
+        
 
     @mock.patch('mysql.connector.connect')
     def test_connect_to_database(self, mock_connect):
@@ -42,11 +59,9 @@ class TestReadStats(unittest.TestCase):
         mock_connect.return_value = conn
         conn.cursor.return_value = cursor
 
-        readstats.insert_data_into_table(conn, "cpu", 50.0)
+        readstats.insert_data_into_table(conn, "cpu", 50.0, "12:00:00")
 
-        cursor.execute.assert_called_once_with("INSERT INTO cpu (value) VALUES (%s)", (50.0,))
-        conn.commit.assert_called_once()
-        cursor.close.assert_called_once()
+        cursor.execute.assert_called_once_with("INSERT INTO cpu (time,value) VALUES (%s, %s)", ("12:00:00",50.0))
 
    
 if __name__ == '__main__':
