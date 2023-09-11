@@ -36,7 +36,7 @@
      ```shell
      localhost:5000/disk_now
      ```
-    - Note: if the application isn't working properly, try the remove the containers and create them again, as follows
+- Note: if the application isn't working properly, try the remove the containers and create them again, as follows
      ```shell
      docker compose down
      ```
