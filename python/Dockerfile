@@ -1,19 +1,17 @@
 FROM python:3.9-slim
 
-RUN apt-get update -y
-
+RUN apt-get update -y && apt-get -y install cron
 
 WORKDIR /app
-
-
-COPY requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
-
-
 COPY . .
+
+RUN pip install -r requirements.txt
 
 RUN chmod +x /app/start.sh
 
-#ENV user=root password=root host=mysql port=3306 database=db
+COPY cronfile /etc/cron.d/cronfile
+RUN chmod 0644 /etc/cron.d/cronfile
+RUN crontab /etc/cron.d/cronfile
 
-#ENTRYPOINT ["/app/start.sh"]
+
+CMD ["cron", "-f"]
