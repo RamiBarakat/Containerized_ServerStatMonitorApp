@@ -54,7 +54,7 @@
   
  ## Tech Stack
  - Linux/Unix OS (RHEL was used in this particular project)
- - Docker & docker-compose (RHEL based systems):
+ - Docker & docker-compose (RHEL based distributions):
    - update yum and download the yum package config manager by:
      
      ```shell
