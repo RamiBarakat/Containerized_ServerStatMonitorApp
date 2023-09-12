@@ -1,0 +1,2 @@
+* * * * * echo "Hello" >> /var/log/cron.log 2>&1
+*/1 * * * * export  USER='root'&& export PASSWORD='root' && export  HOST='mysql'&& export PORT='3306'&& export DATABASE='db' && /usr/local/bin/python /app/readstats.py >> /var/log/cron.log 2>&1
